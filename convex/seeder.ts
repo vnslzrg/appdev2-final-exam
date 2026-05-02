@@ -3,6 +3,15 @@ import { mutation } from "./_generated/server";
 export const seed = mutation({
   args: {},
   handler: async (ctx) => {
+
+    const users = await ctx.db.query("users").collect();
+
+    if (users.length === 0) {
+      return "No users found. Please create a user first.";
+    }
+
+    const userId = users[0]._id;
+
     const initialTasks = [
       "Buy groceries",
       "Finish React Native tutorial",
@@ -19,10 +28,11 @@ export const seed = mutation({
     for (const taskText of initialTasks) {
       await ctx.db.insert("todos", {
         text: taskText,
-        isCompleted: Math.random() > 0.7, // Randomly mark some as completed
+        isCompleted: Math.random() > 0.7,
+        userId: userId, 
       });
     }
-    
+
     return "Successfully seeded 10 tasks!";
   },
 });
