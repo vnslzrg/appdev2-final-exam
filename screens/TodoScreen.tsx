@@ -15,8 +15,15 @@ import {
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { Id } from "../convex/_generated/dataModel";
+import { useRoute, RouteProp } from "@react-navigation/native";
+import { RootStackParamList } from "../App";
 
-const TodoScreen = ({ userId }: {userId: Id<"users">}) => {
+type TodoScreenRouteProp = RouteProp<RootStackParamList, "Todo">;
+
+const TodoScreen = () => {
+    const route = useRoute<TodoScreenRouteProp>();
+    const { userId } = route.params;
+
     const [task, setTask] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -32,7 +39,6 @@ const TodoScreen = ({ userId }: {userId: Id<"users">}) => {
     const filterTodos = todoList.filter(item =>
         item.text.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
     );
-
 
     const handleAddTodo = async () => {
         if (task.trim().length === 0) return;
@@ -76,17 +82,22 @@ const TodoScreen = ({ userId }: {userId: Id<"users">}) => {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {filterTodos.map(item => (
                         <View style={styles.todoItem} key={item._id}>
-                            <TouchableOpacity style={styles.textWrapper} onPress={() => toggleTodo(item._id, item.isCompleted)}>
+                            <TouchableOpacity
+                                style={styles.textWrapper}
+                                onPress={() => toggleTodo(item._id, item.isCompleted)}
+                            >
                                 <Ionicons
                                     name={item.isCompleted ? "checkmark-circle" : "ellipse-outline"}
                                     size={28}
                                     color={item.isCompleted ? "#7D7AFF" : "#CCC"}
                                 />
-                                <Text style={[styles.todoText, item.isCompleted && styles.todoCompleted]}>
+                                <Text style={[
+                                    styles.todoText,
+                                    item.isCompleted && styles.todoCompleted
+                                ]}>
                                     {item.text}
                                 </Text>
                             </TouchableOpacity>
-
 
                             <TouchableOpacity onPress={() => confirmDelete(item._id)}>
                                 <Ionicons name="trash-outline" size={24} color="#FF5252" />
@@ -120,7 +131,7 @@ const TodoScreen = ({ userId }: {userId: Id<"users">}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#7D7AFF", // Consistent Purple theme
+        backgroundColor: "#7D7AFF",
     },
     header: {
         paddingTop: 70,
@@ -145,12 +156,10 @@ const styles = StyleSheet.create({
         height: 50,
         marginLeft: 10,
     },
-
-
     bodyContainer: {
         flex: 1,
         backgroundColor: "#FFF",
-        borderTopLeftRadius: 50, // Consistent with Login screen
+        borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
         paddingHorizontal: 30,
         paddingTop: 40,
@@ -163,7 +172,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 20,
         marginBottom: 15,
-        borderWidth: 1,         // Using border instead of shadow
+        borderWidth: 1,
         borderColor: "#F0F0F0",
     },
     textWrapper: {
@@ -176,7 +185,6 @@ const styles = StyleSheet.create({
         color: "#333",
         marginLeft: 12,
     },
-
     todoCompleted: {
         textDecorationLine: "line-through",
         color: "#AAA",
@@ -190,12 +198,12 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         height: 55,
-        backgroundColor: "#F5F5F5", // Light gray inputs
+        backgroundColor: "#F5F5F5",
         borderRadius: 15,
         paddingHorizontal: 20,
     },
     addButton: {
-        backgroundColor: "#FFCC00", // Golden Yellow accent
+        backgroundColor: "#FFCC00",
         borderRadius: 15,
         width: 55,
         height: 55,

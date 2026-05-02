@@ -16,7 +16,7 @@ type RootStackParamList = {
   Signup: undefined;
 };
 
-type SignupScreenNavigationProp = NativeStackNavigationProp
+type SignupScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   "Signup"
 >;
@@ -36,7 +36,7 @@ export default function SignupScreen() {
       {/* 1. Header Section */}
       <View style={styles.header}>
         <Image
-          source={require("../../assets/Signup.webp")}
+          source={require("./../assets/signup.webp")}
           style={styles.image}
         />
       </View>

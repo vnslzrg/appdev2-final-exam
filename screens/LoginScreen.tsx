@@ -9,16 +9,19 @@ import {
     Alert,
 } from "react-native";
 import Ionicons from "@react-native-vector-icons/ionicons";
-
 import { useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { Id } from "../convex/_generated/dataModel";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../App";
 
-interface LoginProps {
-    onLogin: (id: Id<"users">) => void
-}
+type LoginScreenNavigationProp = NativeStackNavigationProp<
+    RootStackParamList,
+    "Login"
+>;
 
-const LoginScreen = ({ onLogin } : LoginProps) => {
+const LoginScreen = () => {
+    const navigation = useNavigation<LoginScreenNavigationProp>();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
@@ -27,6 +30,7 @@ const LoginScreen = ({ onLogin } : LoginProps) => {
     const handleLogin = async () => {
         if (!email || !password) {
             Alert.alert("Error", "Please enter username and password!")
+            return
         }
 
         try {
@@ -36,11 +40,9 @@ const LoginScreen = ({ onLogin } : LoginProps) => {
             })
 
             if (result.success && result.userId) {
-
-                onLogin(result.userId)
-
                 setEmail('')
                 setPassword('')
+                navigation.navigate("Todo", { userId: result.userId })
             } else {
                 Alert.alert("Login Failed", result.message)
             }
@@ -61,17 +63,15 @@ const LoginScreen = ({ onLogin } : LoginProps) => {
                 />
             </View>
 
-
             {/* 2. Form Section */}
             <View style={styles.formContainer}>
                 <Text style={styles.label}>Email Address</Text>
-                <TextInput 
-                    style={styles.input} 
-                    placeholder="john@gmail.com" 
+                <TextInput
+                    style={styles.input}
+                    placeholder="john@gmail.com"
                     value={email}
                     onChangeText={setEmail}
                 />
-
 
                 <Text style={styles.label}>Password</Text>
                 <TextInput
@@ -82,19 +82,15 @@ const LoginScreen = ({ onLogin } : LoginProps) => {
                     onChangeText={setPassword}
                 />
 
-
                 <TouchableOpacity>
                     <Text style={styles.forgotText}>Forgot Password?</Text>
                 </TouchableOpacity>
-
 
                 <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                     <Text style={styles.loginButtonText}>Login</Text>
                 </TouchableOpacity>
 
-
                 <Text style={styles.orText}>Or</Text>
-
 
                 <View style={styles.socialRow}>
                     <TouchableOpacity style={styles.socialIcon}>
@@ -108,10 +104,9 @@ const LoginScreen = ({ onLogin } : LoginProps) => {
                     </TouchableOpacity>
                 </View>
 
-
                 <View style={styles.footer}>
                     <Text>Don't have an account? </Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
                         <Text style={styles.linkText}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>
@@ -119,7 +114,6 @@ const LoginScreen = ({ onLogin } : LoginProps) => {
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -204,6 +198,5 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
 });
-
 
 export default LoginScreen;
